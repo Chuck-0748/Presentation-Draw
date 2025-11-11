@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Presentation Order Draw</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; }
+        .team-btn { 
+            padding: 15px 30px; 
+            font-size: 18px; 
+            margin: 10px; 
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .team-btn:hover { background-color: #45a049; }
+        .team-btn:disabled { 
+            background-color: #cccccc; 
+            cursor: not-allowed;
+        }
+        .result { 
+            font-size: 24px; 
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 40px;
+        }
+        .reset-btn {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Presentation Order Draw</h1>
+        <p>Each team representative click your button to draw a number:</p>
+        
+        <button class="team-btn" onclick="drawNumber(1)">Team 1 Draw</button>
+        <button class="team-btn" onclick="drawNumber(2)">Team 2 Draw</button>
+        <button class="team-btn" onclick="drawNumber(3)">Team 3 Draw</button>
+        
+        <div id="result1" class="result"></div>
+        <div id="result2" class="result"></div>
+        <div id="result3" class="result"></div>
+        
+        <button class="reset-btn" onclick="resetDraw()">Reset Draw</button>
+    </div>
+
+    <script>
+        let availableNumbers = [1, 2, 3];
+        let drawnNumbers = [];
+        
+        function drawNumber(team) {
+            if (availableNumbers.length === 0) {
+                alert("All numbers have been drawn!");
+                return;
+            }
+            
+            // Disable the clicked button
+            event.target.disabled = true;
+            
+            // Random selection with animation
+            let count = 0;
+            const maxCount = 20;
+            const resultDiv = document.getElementById(`result${team}`);
+            
+            const interval = setInterval(() => {
+                resultDiv.textContent = `Team ${team}: ${Math.floor(Math.random() * 3) + 1}`;
+                count++;
+                
+                if (count >= maxCount) {
+                    clearInterval(interval);
+                    const selectedNum = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+                    
+                    // Remove selected number from available
+                    availableNumbers = availableNumbers.filter(num => num !== selectedNum);
+                    drawnNumbers[team] = selectedNum;
+                    
+                    resultDiv.textContent = `Team ${team}: ${selectedNum} (Presentation Order)`;
+                    resultDiv.style.color = "#1E90FF";
+                    
+                    // Check if all drawn
+                    if (availableNumbers.length === 0) {
+                        setTimeout(() => {
+                            alert("Draw completed! Presentation order finalized.");
+                        }, 500);
+                    }
+                }
+            }, 100);
+        }
+        
+        function resetDraw() {
+            availableNumbers = [1, 2, 3];
+            drawnNumbers = [];
+            
+            // Reset buttons and results
+            document.querySelectorAll('.team-btn').forEach(btn => {
+                btn.disabled = false;
+            });
+            
+            document.querySelectorAll('.result').forEach(div => {
+                div.textContent = "";
+                div.style.color = "";
+            });
+        }
+    </script>
+</body>
+</html>
